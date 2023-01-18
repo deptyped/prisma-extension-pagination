@@ -1,0 +1,52 @@
+{
+  "name": "prisma-extension-template",
+  "version": "0.0.0",
+  "description": "Prisma Client extension template",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "dev": "tsc-watch",
+    "test": "jest",
+    "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "npm run lint -- --fix",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deptyped/prisma-extension-pagination.git"
+  },
+  "keywords": [
+    "node",
+    "prisma",
+    "prisma-client",
+    "prisma-extension"
+  ],
+  "author": "deptyped <deptyped@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/deptyped/prisma-extension-pagination/issues"
+  },
+  "homepage": "https://github.com/deptyped/prisma-extension-pagination#readme",
+  "peerDependencies": {
+    "@prisma/client": "^4.9.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.2.5",
+    "@types/node": "^18.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/parser": "^5.48.2",
+    "eslint": "^8.32.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^29.3.1",
+    "prisma": "^4.9.0",
+    "rimraf": "^4.1.0",
+    "ts-jest": "^29.0.5",
+    "tsc-watch": "^6.0.0",
+    "typescript": "^4.9.4"
+  }
+}
