@@ -23,4 +23,5 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npx prisma generate && npm run build
-      - run: npm test
+      - run: npx prisma migrate deploy && npm test
+
