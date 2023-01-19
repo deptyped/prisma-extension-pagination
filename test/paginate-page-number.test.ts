@@ -1,130 +1,80 @@
-import { User } from "@prisma/client";
 import { PageNumberPaginationMeta } from "../src";
 
 import { prisma } from "./helpers/prisma";
 import { USERS_PER_PAGE, POSTS_COUNT } from "./helpers/constants";
-import { getResultsByPage } from "./helpers/utils";
-
-let USERS: Array<Pick<User, "id">>;
-
-beforeAll(async () => {
-  USERS = await prisma.user.findMany({
-    select: {
-      id: true,
-    },
-  });
-});
 
 describe("$paginate with pages", () => {
   test("load first page", async () => {
     const limit = USERS_PER_PAGE;
-    const query = prisma.user.paginate({
-      select: {
-        id: true,
-      },
-    });
-    const [results, meta] = await query.withPages({
+    const [results, meta] = await prisma.user.paginate().withPages({
       limit,
     });
-    const [resultsWithPageCount, metaWithPageCount] = await query.withPages({
-      limit,
-      includePageCount: true,
+
+    const expectedResults = await prisma.user.findMany({
+      take: limit,
     });
 
-    expect(results.length).toBe(USERS_PER_PAGE);
-    expect(results).toStrictEqual(getResultsByPage(USERS, 1, limit));
-
-    expect(resultsWithPageCount.length).toBe(USERS_PER_PAGE);
-    expect(resultsWithPageCount).toStrictEqual(
-      getResultsByPage(USERS, 1, limit)
-    );
-
-    const validMeta = {
+    expect(results).toStrictEqual(expectedResults);
+    expect(meta).toStrictEqual({
       currentPage: 1,
       isFirstPage: true,
       isLastPage: false,
       previousPage: null,
       nextPage: 2,
       pageCount: null,
-    } satisfies PageNumberPaginationMeta;
-
-    expect(meta).toStrictEqual(validMeta);
-    expect(metaWithPageCount).toStrictEqual({
-      ...validMeta,
-      pageCount: 5,
     } satisfies PageNumberPaginationMeta);
   });
 
   test("load second page", async () => {
     const page = 2;
     const limit = USERS_PER_PAGE;
-    const query = prisma.user.paginate({
-      select: {
-        id: true,
-      },
-    });
-    const [results, meta] = await query.withPages({
+
+    const [results, meta] = await prisma.user.paginate().withPages({
       page,
       limit,
     });
-    const [resultsWithPageCount, metaWithPageCount] = await query.withPages({
-      page,
-      limit,
-      includePageCount: true,
+
+    const expectedResults = await prisma.user.findMany({
+      skip: (page - 1) * limit,
+      take: limit,
     });
 
-    expect(results.length).toBe(USERS_PER_PAGE);
-    expect(results).toStrictEqual(getResultsByPage(USERS, page, limit));
-
-    expect(resultsWithPageCount.length).toBe(USERS_PER_PAGE);
-    expect(resultsWithPageCount).toStrictEqual(
-      getResultsByPage(USERS, page, limit)
-    );
-
-    const validMeta = {
+    expect(results).toStrictEqual(expectedResults);
+    expect(meta).toStrictEqual({
       currentPage: 2,
       isFirstPage: false,
       isLastPage: false,
       previousPage: 1,
       nextPage: 3,
       pageCount: null,
-    } satisfies PageNumberPaginationMeta;
-
-    expect(meta).toStrictEqual(validMeta);
-    expect(metaWithPageCount).toStrictEqual({
-      ...validMeta,
-      pageCount: 5,
     } satisfies PageNumberPaginationMeta);
   });
 
   test("load last page", async () => {
     const page = 5;
     const limit = USERS_PER_PAGE;
-    const query = prisma.user.paginate({
-      select: {
-        id: true,
-      },
-    });
+
+    const query = prisma.user.paginate();
 
     const [results, meta] = await query.withPages({
       page,
       limit,
     });
+
     const [resultsWithPageCount, metaWithPageCount] = await query.withPages({
       page,
       limit,
       includePageCount: true,
     });
 
-    expect(results.length).toBe(USERS_PER_PAGE);
-    expect(results).toStrictEqual(getResultsByPage(USERS, page, limit));
+    const expectedResults = await prisma.user.findMany({
+      take: -limit,
+    });
 
-    expect(resultsWithPageCount.length).toBe(USERS_PER_PAGE);
-    expect(resultsWithPageCount).toStrictEqual(
-      getResultsByPage(USERS, page, limit)
-    );
+    expect(results).toStrictEqual(expectedResults);
+    expect(resultsWithPageCount).toStrictEqual(expectedResults);
 
-    const validMeta = {
+    const expectedMeta = {
       currentPage: 5,
       isFirstPage: false,
       isLastPage: true,
@@ -133,9 +83,9 @@ describe("$paginate with pages", () => {
       pageCount: null,
     } satisfies PageNumberPaginationMeta;
 
-    expect(meta).toStrictEqual(validMeta);
+    expect(meta).toStrictEqual(expectedMeta);
     expect(metaWithPageCount).toStrictEqual({
-      ...validMeta,
+      ...expectedMeta,
       pageCount: 5,
     });
   });
@@ -165,24 +115,22 @@ describe("$paginate with pages", () => {
   });
 
   test("throw error if options are invalid", async () => {
-    expect(
-      async () =>
-        await prisma.user.paginate().withPages({
-          limit: 0,
-        })
+    await expect(
+      prisma.user.paginate().withPages({
+        limit: 0,
+      })
     ).rejects.toThrow(Error);
 
-    expect(
-      async () =>
-        await prisma.user.paginate().withPages({
-          limit: 1,
-          page: -1,
-        })
+    await expect(
+      prisma.user.paginate().withPages({
+        limit: 1,
+        page: -1,
+      })
     ).rejects.toThrow(Error);
 
-    expect(
+    await expect(
       // @ts-expect-error to test
-      async () => await prisma.user.paginate().withPages()
+      prisma.user.paginate().withPages()
     ).rejects.toThrow(Error);
   });
 });

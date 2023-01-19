@@ -1,80 +1,14 @@
 import { Prisma } from "@prisma/client";
-import { PageNumberPaginationOptions, PageNumberPaginationMeta } from "./types";
-
-type PrismaModel = {
-  [k in "findMany" | "count"]: CallableFunction;
-};
-
-type PrismaQuery = {
-  where: Record<string, unknown>;
-};
-
-const paginateWithPages = async (
-  model: PrismaModel,
-  query: PrismaQuery,
-  limit: number,
-  currentPage: number
-): Promise<[unknown, PageNumberPaginationMeta]> => {
-  const results = await model.findMany({
-    ...query,
-    ...{
-      skip: (currentPage - 1) * limit,
-      take: limit + 1,
-    },
-  });
-
-  const previousPage = currentPage > 1 ? currentPage - 1 : null;
-  const nextPage = results.length > limit ? currentPage + 1 : null;
-  if (nextPage) {
-    results.pop();
-  }
-
-  return [
-    results,
-    {
-      isFirstPage: previousPage === null,
-      isLastPage: nextPage === null,
-      currentPage,
-      previousPage,
-      nextPage,
-      pageCount: null,
-    },
-  ];
-};
-
-const paginateWithPagesIncludePageCount = async (
-  model: PrismaModel,
-  query: PrismaQuery,
-  limit: number,
-  currentPage: number
-): Promise<[unknown, PageNumberPaginationMeta]> => {
-  const [results, totalCount] = await Promise.all([
-    model.findMany({
-      ...query,
-      ...{
-        skip: (currentPage - 1) * limit,
-        take: limit,
-      },
-    }),
-    model.count({ where: query?.where }),
-  ]);
-
-  const pageCount = Math.ceil(totalCount / limit);
-  const previousPage = currentPage > 1 ? currentPage - 1 : null;
-  const nextPage = currentPage < pageCount ? currentPage + 1 : null;
-
-  return [
-    results,
-    {
-      isFirstPage: previousPage === null,
-      isLastPage: nextPage === null,
-      currentPage,
-      previousPage,
-      nextPage,
-      pageCount,
-    },
-  ];
-};
+import {
+  PageNumberPaginationOptions,
+  PageNumberPaginationMeta,
+  CursorPaginationOptions,
+  CursorPaginationMeta,
+  PrismaModel,
+  PrismaQuery,
+} from "./types";
+import { paginateWithPages } from "./page-number";
+import { paginateWithCursor } from "./cursor";
 
 export const extension = Prisma.defineExtension({
   name: "pagination",
@@ -93,20 +27,16 @@ export const extension = Prisma.defineExtension({
           ): Promise<
             [Prisma.Result<T, A, "findMany">, PageNumberPaginationMeta]
           > => {
-            const {
-              page: currentPage,
-              limit,
-              includePageCount,
-            } = {
+            const { page, limit, includePageCount } = {
               page: 1,
               includePageCount: false,
               ...options,
             } satisfies PageNumberPaginationOptions;
 
             if (
-              typeof currentPage !== "number" ||
-              currentPage < 1 ||
-              currentPage > Number.MAX_SAFE_INTEGER
+              typeof page !== "number" ||
+              page < 1 ||
+              page > Number.MAX_SAFE_INTEGER
             ) {
               throw new Error("Invalid page option value");
             }
@@ -121,17 +51,72 @@ export const extension = Prisma.defineExtension({
 
             const query = (args ?? {}) as PrismaQuery;
 
-            return (
-              includePageCount
-                ? paginateWithPagesIncludePageCount(
-                    this,
-                    query,
-                    limit,
-                    currentPage
-                  )
-                : paginateWithPages(this, query, limit, currentPage)
-            ) as Promise<
+            return paginateWithPages(this, query, {
+              limit,
+              page,
+              includePageCount,
+            }) as Promise<
               [Prisma.Result<T, A, "findMany">, PageNumberPaginationMeta]
+            >;
+          },
+
+          withCursor: async (
+            options: CursorPaginationOptions<
+              Prisma.Result<T, A, "findMany">[number],
+              // @ts-expect-error property exists
+              NonNullable<Prisma.Args<T, "findMany">["cursor"]>
+            >
+          ): Promise<
+            [Prisma.Result<T, A, "findMany">, CursorPaginationMeta]
+          > => {
+            const { limit, after, before, getCursor, parseCursor } = {
+              // @ts-expect-error unable to match the actual fields of the model
+              getCursor({ id }) {
+                if (typeof id !== "number") {
+                  throw new Error("Unable to serialize cursor");
+                }
+
+                return id.toString();
+              },
+              // @ts-expect-error unable to match the actual fields of the model
+              parseCursor(cursor) {
+                const id = parseInt(cursor, 10);
+
+                if (Number.isNaN(id)) {
+                  throw new Error("Unable to parse cursor");
+                }
+
+                return {
+                  id,
+                } as unknown;
+              },
+              ...options,
+            } satisfies typeof options;
+
+            if (
+              typeof limit !== "number" ||
+              limit < 1 ||
+              limit > Number.MAX_SAFE_INTEGER
+            ) {
+              throw new Error("Invalid limit  value");
+            }
+
+            if (typeof after === "string" && typeof before === "string") {
+              throw new Error(
+                "Invalid cursor. Options after and before cannot be provided at the same time"
+              );
+            }
+
+            const query = (args ?? {}) as PrismaQuery;
+
+            return paginateWithCursor(this, query, {
+              limit,
+              after,
+              before,
+              getCursor,
+              parseCursor,
+            }) as Promise<
+              [Prisma.Result<T, A, "findMany">, CursorPaginationMeta]
             >;
           },
         };
