@@ -18,13 +18,28 @@ npm i prisma-extension-pagination
 
 ## Usage
 
-### Install extension
+### Install extension to all models
 
 ```ts
 import { PrismaClient } from "@prisma/client";
 import pagination from "prisma-extension-pagination";
 
 const prisma = new PrismaClient().$extends(pagination);
+```
+
+### Install extension on certain model
+
+```ts
+import { PrismaClient } from "@prisma/client";
+import { paginate } from "prisma-extension-pagination";
+
+const prisma = new PrismaClient().$extends({
+  model: {
+    user: {
+      paginate,
+    }
+  }
+});
 ```
 
 ### Page number pagination
