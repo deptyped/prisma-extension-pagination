@@ -10,7 +10,7 @@ import {
 import { paginateWithPages } from "./page-number";
 import { paginateWithCursor } from "./cursor";
 
-export function paginate<T extends PrismaModel, A>(
+export function paginate<T, A>(
   this: T,
   args?: Prisma.Exact<
     A,
@@ -45,7 +45,7 @@ export function paginate<T extends PrismaModel, A>(
 
       const query = (args ?? {}) as PrismaQuery;
 
-      return paginateWithPages(this, query, {
+      return paginateWithPages(this as PrismaModel, query, {
         limit,
         page,
         includePageCount,
@@ -57,12 +57,10 @@ export function paginate<T extends PrismaModel, A>(
     withCursor: async (
       options: CursorPaginationOptions<
         Prisma.Result<T, A, "findMany">[number],
-        // @ts-expect-error property exists
         NonNullable<Prisma.Args<T, "findMany">["cursor"]>
       >
     ): Promise<[Prisma.Result<T, A, "findMany">, CursorPaginationMeta]> => {
       const { limit, after, before, getCursor, parseCursor } = {
-        // @ts-expect-error unable to match the actual fields of the model
         getCursor({ id }) {
           if (typeof id !== "number") {
             throw new Error("Unable to serialize cursor");
@@ -101,7 +99,7 @@ export function paginate<T extends PrismaModel, A>(
 
       const query = (args ?? {}) as PrismaQuery;
 
-      return paginateWithCursor(this, query, {
+      return paginateWithCursor(this as PrismaModel, query, {
         limit,
         after,
         before,
