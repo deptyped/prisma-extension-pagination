@@ -1,6 +1,6 @@
 {
   "name": "prisma-extension-pagination",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Prisma Client extension for pagination",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
