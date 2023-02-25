@@ -26,8 +26,8 @@ export const paginateWithCursor = async <R, C>(
   if (typeof before === "string") {
     const cursor = parseCursor(before);
 
-    let nextResultCount;
-    [results, nextResultCount] = await Promise.all([
+    let nextResult;
+    [results, nextResult] = await Promise.all([
       model.findMany({
         ...query,
         cursor,
@@ -45,12 +45,12 @@ export const paginateWithCursor = async <R, C>(
     if (results.length > limit) {
       hasPreviousPage = Boolean(results.shift());
     }
-    hasNextPage = Boolean(nextResultCount.length);
+    hasNextPage = Boolean(nextResult.length);
   } else if (typeof after === "string") {
     const cursor = parseCursor(after);
 
-    let previousResultCount;
-    [results, previousResultCount] = await Promise.all([
+    let previousResult;
+    [results, previousResult] = await Promise.all([
       model.findMany({
         ...query,
         cursor,
@@ -65,7 +65,7 @@ export const paginateWithCursor = async <R, C>(
       }),
     ]);
 
-    hasPreviousPage = Boolean(previousResultCount.length);
+    hasPreviousPage = Boolean(previousResult.length);
     if (results.length > limit) {
       hasNextPage = Boolean(results.pop());
     }
