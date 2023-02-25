@@ -2,10 +2,12 @@
   "name": "prisma-extension-pagination",
   "version": "0.2.3",
   "description": "Prisma Client extension for pagination",
+  "type": "module",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
   "exports": {
-    "require": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "require": "./dist/index.cjs",
     "import": "./dist/index.module.js"
   },
   "main": "./dist/index.js",
