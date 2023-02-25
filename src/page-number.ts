@@ -1,4 +1,4 @@
-import { resetSelection } from "./helpers";
+import { resetOrdering, resetSelection } from "./helpers";
 import {
   PageNumberPaginationMeta,
   PageNumberPaginationOptions,
@@ -31,6 +31,7 @@ export const paginateWithPages = async (
       model.count({
         ...query,
         ...resetSelection,
+        ...resetOrdering,
       }),
     ]);
 

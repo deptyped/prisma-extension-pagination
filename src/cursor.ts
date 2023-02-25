@@ -34,7 +34,7 @@ export const paginateWithCursor = async <R, C>(
         skip: 1,
         take: -limit - 1,
       }),
-      model.count({
+      model.findMany({
         ...query,
         ...resetSelection,
         cursor,
@@ -45,7 +45,7 @@ export const paginateWithCursor = async <R, C>(
     if (results.length > limit) {
       hasPreviousPage = Boolean(results.shift());
     }
-    hasNextPage = nextResultCount > 0;
+    hasNextPage = Boolean(nextResultCount.length);
   } else if (typeof after === "string") {
     const cursor = parseCursor(after);
 
@@ -57,7 +57,7 @@ export const paginateWithCursor = async <R, C>(
         skip: 1,
         take: limit + 1,
       }),
-      model.count({
+      model.findMany({
         ...query,
         ...resetSelection,
         cursor,
@@ -65,7 +65,7 @@ export const paginateWithCursor = async <R, C>(
       }),
     ]);
 
-    hasPreviousPage = previousResultCount > 0;
+    hasPreviousPage = Boolean(previousResultCount.length);
     if (results.length > limit) {
       hasNextPage = Boolean(results.pop());
     }
