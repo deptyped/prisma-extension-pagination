@@ -10,7 +10,7 @@ import {
 import { paginateWithPages } from "./page-number";
 import { paginateWithCursor } from "./cursor";
 
-export function paginate<T, A>(
+export function paginate<T, A, TResult extends Prisma.Result<T, A, "findMany">>(
   this: T,
   args?: Prisma.Exact<
     A,
@@ -21,10 +21,7 @@ export function paginate<T, A>(
     withPages: async <TOptions extends PageNumberPaginationOptions>(
       options: TOptions
     ): Promise<
-      [
-        Prisma.Result<T, A, "findMany">,
-        PageNumberPaginationMeta<TOptions["includePageCount"]>
-      ]
+      [TResult, PageNumberPaginationMeta<TOptions["includePageCount"]>]
     > => {
       const { page, limit, includePageCount } = {
         page: 1,
@@ -55,19 +52,16 @@ export function paginate<T, A>(
         page,
         includePageCount,
       }) as Promise<
-        [
-          Prisma.Result<T, A, "findMany">,
-          PageNumberPaginationMeta<TOptions["includePageCount"]>
-        ]
+        [TResult, PageNumberPaginationMeta<TOptions["includePageCount"]>]
       >;
     },
 
     withCursor: async (
       options: CursorPaginationOptions<
-        Prisma.Result<T, A, "findMany">[number],
+        TResult[number],
         NonNullable<Prisma.Args<T, "findMany">["cursor"]>
       >
-    ): Promise<[Prisma.Result<T, A, "findMany">, CursorPaginationMeta]> => {
+    ): Promise<[TResult, CursorPaginationMeta]> => {
       const { limit, after, before, getCursor, parseCursor } = {
         getCursor({ id }) {
           if (typeof id !== "number") {
@@ -113,7 +107,7 @@ export function paginate<T, A>(
         before,
         getCursor,
         parseCursor,
-      }) as Promise<[Prisma.Result<T, A, "findMany">, CursorPaginationMeta]>;
+      }) as Promise<[TResult, CursorPaginationMeta]>;
     },
   };
 }
