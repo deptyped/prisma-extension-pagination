@@ -18,9 +18,14 @@ export function paginate<T, A>(
   >
 ) {
   return {
-    withPages: async (
-      options: PageNumberPaginationOptions
-    ): Promise<[Prisma.Result<T, A, "findMany">, PageNumberPaginationMeta]> => {
+    withPages: async <TOptions extends PageNumberPaginationOptions>(
+      options: TOptions
+    ): Promise<
+      [
+        Prisma.Result<T, A, "findMany">,
+        PageNumberPaginationMeta<TOptions["includePageCount"]>
+      ]
+    > => {
       const { page, limit, includePageCount } = {
         page: 1,
         includePageCount: false,
@@ -50,7 +55,10 @@ export function paginate<T, A>(
         page,
         includePageCount,
       }) as Promise<
-        [Prisma.Result<T, A, "findMany">, PageNumberPaginationMeta]
+        [
+          Prisma.Result<T, A, "findMany">,
+          PageNumberPaginationMeta<TOptions["includePageCount"]>
+        ]
       >;
     },
 

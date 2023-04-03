@@ -66,7 +66,6 @@ const [users, meta] = prisma.user
   isLastPage: false,
   previousPage: null,
   nextPage: 2,
-  pageCount: null,
 }
 ```
 
@@ -87,7 +86,6 @@ const [users, meta] = prisma.user
   isLastPage: false,
   previousPage: 1,
   nextPage: 3,
-  pageCount: null,
 }
 ```
 
@@ -110,6 +108,7 @@ const [users, meta] = prisma.user
   previousPage: 1,
   nextPage: 3,
   pageCount: 10, // the number of pages is calculated
+  totalCount: 100, // the total number of results is calculated
 }
 ```
 

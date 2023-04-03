@@ -12,14 +12,24 @@ export type PageNumberPaginationOptions = {
   includePageCount?: boolean;
 };
 
-export type PageNumberPaginationMeta = {
+export type PageNumberPagination = {
   isFirstPage: boolean;
   isLastPage: boolean;
   currentPage: number;
   previousPage: number | null;
   nextPage: number | null;
-  pageCount: number | null;
 };
+
+export type PageNumberCounters = {
+  pageCount: number;
+  totalCount: number;
+};
+
+export type PageNumberPaginationMeta<
+  TWithCounters extends boolean | undefined = false
+> = TWithCounters extends true
+  ? PageNumberPagination & PageNumberCounters
+  : PageNumberPagination;
 
 export type CursorPaginationOptions<Result, Condition> = {
   limit: number;

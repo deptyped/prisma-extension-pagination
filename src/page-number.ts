@@ -12,14 +12,14 @@ export const paginateWithPages = async (
   model: PrismaModel,
   query: PrismaQuery,
   { page, limit, includePageCount }: PaginateWithPagesOptions
-): Promise<[unknown, PageNumberPaginationMeta]> => {
+): Promise<[unknown, PageNumberPaginationMeta<typeof includePageCount>]> => {
   const previousPage = page > 1 ? page - 1 : null;
 
   let results;
   let nextPage;
   let pageCount = null;
+  let totalCount = null;
   if (includePageCount) {
-    let totalCount;
     [results, totalCount] = await Promise.all([
       model.findMany({
         ...query,
@@ -55,12 +55,19 @@ export const paginateWithPages = async (
   return [
     results,
     {
-      isFirstPage: previousPage === null,
-      isLastPage: nextPage === null,
-      currentPage: page,
-      previousPage,
-      nextPage,
-      pageCount,
+      ...{
+        isFirstPage: previousPage === null,
+        isLastPage: nextPage === null,
+        currentPage: page,
+        previousPage,
+        nextPage,
+      },
+      ...(includePageCount === true
+        ? {
+            pageCount,
+            totalCount,
+          }
+        : {}),
     },
   ];
 };
