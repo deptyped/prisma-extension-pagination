@@ -21,7 +21,6 @@ describe("$paginate with pages", () => {
       isLastPage: false,
       previousPage: null,
       nextPage: 2,
-      pageCount: null,
     } satisfies PageNumberPaginationMeta);
   });
 
@@ -46,7 +45,6 @@ describe("$paginate with pages", () => {
       isLastPage: false,
       previousPage: 1,
       nextPage: 3,
-      pageCount: null,
     } satisfies PageNumberPaginationMeta);
   });
 
@@ -80,13 +78,13 @@ describe("$paginate with pages", () => {
       isLastPage: true,
       previousPage: 4,
       nextPage: null,
-      pageCount: null,
     } satisfies PageNumberPaginationMeta;
 
     expect(meta).toStrictEqual(expectedMeta);
     expect(metaWithPageCount).toStrictEqual({
       ...expectedMeta,
       pageCount: 5,
+      totalCount: 20,
     });
   });
 
@@ -111,7 +109,8 @@ describe("$paginate with pages", () => {
       previousPage: 1,
       nextPage: 3,
       pageCount: POSTS_COUNT / 2 / 2,
-    } satisfies PageNumberPaginationMeta);
+      totalCount: 20,
+    } satisfies PageNumberPaginationMeta<true>);
   });
 
   test("throw error if options are invalid", async () => {
