@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "lib": ["ES2020"],
-    "module": "CommonJS",
-    "moduleResolution": "Node16",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
