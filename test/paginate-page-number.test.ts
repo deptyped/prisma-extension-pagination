@@ -117,19 +117,19 @@ describe("$paginate with pages", () => {
     await expect(
       prisma.user.paginate().withPages({
         limit: 0,
-      })
+      }),
     ).rejects.toThrow(Error);
 
     await expect(
       prisma.user.paginate().withPages({
         limit: 1,
         page: -1,
-      })
+      }),
     ).rejects.toThrow(Error);
 
     await expect(
       // @ts-expect-error to test
-      prisma.user.paginate().withPages()
+      prisma.user.paginate().withPages(),
     ).rejects.toThrow(Error);
   });
 });

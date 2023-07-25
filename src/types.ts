@@ -26,7 +26,7 @@ export type PageNumberCounters = {
 };
 
 export type PageNumberPaginationMeta<
-  TWithCounters extends boolean | undefined = false
+  TWithCounters extends boolean | undefined = false,
 > = TWithCounters extends true
   ? PageNumberPagination & PageNumberCounters
   : PageNumberPagination;

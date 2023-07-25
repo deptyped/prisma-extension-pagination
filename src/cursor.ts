@@ -17,7 +17,7 @@ export const paginateWithCursor = async <R, C>(
     getCursor,
     parseCursor,
     limit,
-  }: PaginateWithCursorOptions<R, C>
+  }: PaginateWithCursorOptions<R, C>,
 ): Promise<[unknown, CursorPaginationMeta]> => {
   let results;
   let hasPreviousPage = false;

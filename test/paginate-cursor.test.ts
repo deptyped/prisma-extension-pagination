@@ -181,11 +181,11 @@ describe("$paginate with cursor", () => {
       hasNextPage: true,
       startCursor: getCursor(
         expectedResults[0].postId,
-        expectedResults[0].userId
+        expectedResults[0].userId,
       ),
       endCursor: getCursor(
         expectedResults[expectedResults.length - 1].postId,
-        expectedResults[expectedResults.length - 1].userId
+        expectedResults[expectedResults.length - 1].userId,
       ),
     } satisfies CursorPaginationMeta);
   });
@@ -194,7 +194,7 @@ describe("$paginate with cursor", () => {
     await expect(
       prisma.user.paginate().withCursor({
         limit: 0,
-      })
+      }),
     ).rejects.toThrow(Error);
 
     await expect(
@@ -202,25 +202,25 @@ describe("$paginate with cursor", () => {
         limit: 1,
         after: "1",
         before: "1",
-      })
+      }),
     ).rejects.toThrow(Error);
 
     await expect(
       prisma.user.paginate().withCursor({
         limit: 1,
         after: "invalid",
-      })
+      }),
     ).rejects.toThrow(Error);
 
     await expect(
       prisma.postOnUser.paginate().withCursor({
         limit: 1,
-      })
+      }),
     ).rejects.toThrow("Unable to serialize cursor");
 
     await expect(
       // @ts-expect-error to test
-      prisma.user.paginate().withCursor()
+      prisma.user.paginate().withCursor(),
     ).rejects.toThrow(Error);
   });
 });

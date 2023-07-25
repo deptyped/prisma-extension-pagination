@@ -15,11 +15,11 @@ export function paginate<T, A, TResult extends Prisma.Result<T, A, "findMany">>(
   args?: Prisma.Exact<
     A,
     Omit<Prisma.Args<T, "findMany">, "cursor" | "take" | "skip">
-  >
+  >,
 ) {
   return {
     withPages: async <TOptions extends PageNumberPaginationOptions>(
-      options: TOptions
+      options: TOptions,
     ): Promise<
       [TResult, PageNumberPaginationMeta<TOptions["includePageCount"]>]
     > => {
@@ -60,7 +60,7 @@ export function paginate<T, A, TResult extends Prisma.Result<T, A, "findMany">>(
       options: CursorPaginationOptions<
         TResult[number],
         NonNullable<Prisma.Args<T, "findMany">["cursor"]>
-      >
+      >,
     ): Promise<[TResult, CursorPaginationMeta]> => {
       const { limit, after, before, getCursor, parseCursor } = {
         getCursor({ id }) {
@@ -95,7 +95,7 @@ export function paginate<T, A, TResult extends Prisma.Result<T, A, "findMany">>(
 
       if (typeof after === "string" && typeof before === "string") {
         throw new Error(
-          "Invalid cursor. Options after and before cannot be provided at the same time"
+          "Invalid cursor. Options after and before cannot be provided at the same time",
         );
       }
 
