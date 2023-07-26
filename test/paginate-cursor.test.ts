@@ -2,8 +2,67 @@ import { CursorPaginationMeta } from "../src";
 
 import { prisma } from "./helpers/prisma";
 import { USERS_PER_PAGE } from "./helpers/constants";
+import { PrismaClient } from "@prisma/client";
 
-describe("$paginate with cursor", () => {
+import pagination from "../src";
+
+describe("paginate with cursor", () => {
+  test("accepts default options", async () => {
+    const limit = USERS_PER_PAGE;
+
+    const prismaX = new PrismaClient().$extends(
+      pagination({
+        cursor: {
+          limit,
+        },
+      }),
+    );
+
+    const [results, meta] = await prismaX.user.paginate().withCursor();
+
+    const expectedResults = await prismaX.user.findMany({
+      take: limit,
+    });
+
+    expect(results).toStrictEqual(expectedResults);
+
+    expect(meta).toStrictEqual({
+      hasPreviousPage: false,
+      hasNextPage: true,
+      startCursor: expectedResults[0].id.toString(),
+      endCursor: expectedResults[expectedResults.length - 1].id.toString(),
+    } satisfies CursorPaginationMeta);
+  });
+
+  test("override default options", async () => {
+    const limit = USERS_PER_PAGE;
+
+    const prismaX = new PrismaClient().$extends(
+      pagination({
+        cursor: {
+          limit: limit * 2,
+        },
+      }),
+    );
+
+    const [results, meta] = await prismaX.user.paginate().withCursor({
+      limit,
+    });
+
+    const expectedResults = await prismaX.user.findMany({
+      take: limit,
+    });
+
+    expect(results).toStrictEqual(expectedResults);
+
+    expect(meta).toStrictEqual({
+      hasPreviousPage: false,
+      hasNextPage: true,
+      startCursor: expectedResults[0].id.toString(),
+      endCursor: expectedResults[expectedResults.length - 1].id.toString(),
+    } satisfies CursorPaginationMeta);
+  });
+
   test("load first page", async () => {
     const limit = USERS_PER_PAGE;
     const [results, meta] = await prisma.user.paginate().withCursor({
