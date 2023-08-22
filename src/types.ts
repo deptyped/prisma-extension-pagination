@@ -31,12 +31,16 @@ export type PageNumberPaginationMeta<
   ? PageNumberPagination & PageNumberCounters
   : PageNumberPagination;
 
+export type GetCursorFunction<R> = (result: R) => string;
+
+export type ParseCursorFunction<C> = (cursor: string) => C;
+
 export type CursorPaginationOptions<Result, Condition> = {
   limit: number;
   after?: string;
   before?: string;
-  getCursor?: (result: Result) => string;
-  parseCursor?: (cursor: string) => Condition;
+  getCursor?: GetCursorFunction<Result>;
+  parseCursor?: ParseCursorFunction<Condition>;
 };
 
 export type CursorPaginationMeta = {

@@ -6,9 +6,9 @@ Prisma Client extension for pagination.
 
 ## Features
 
-- [Page number pagination](#page-number-pagination).
-- [Cursor-based pagination](#cursor-based-pagination).
-- Fully tested.
+- [Page number pagination](#page-number-pagination)
+- [Cursor-based pagination](#cursor-based-pagination)
+- Fully tested
 
 ## Installation
 
@@ -16,18 +16,16 @@ Prisma Client extension for pagination.
 npm i prisma-extension-pagination
 ```
 
-## Usage
-
 ### Install extension to all models
 
 ```ts
 import { PrismaClient } from "@prisma/client";
 import pagination from "prisma-extension-pagination";
 
-const prisma = new PrismaClient().$extends(pagination);
+const prisma = new PrismaClient().$extends(pagination());
 ```
 
-### Install extension on certain model
+### Install extension on some models
 
 ```ts
 import { PrismaClient } from "@prisma/client";
@@ -37,14 +35,78 @@ const prisma = new PrismaClient().$extends({
   model: {
     user: {
       paginate,
-    }
-  }
+    },
+  },
 });
 ```
+
+### Change default settings
+
+```ts
+import { PrismaClient } from "@prisma/client";
+import pagination from "prisma-extension-pagination";
+
+const prisma = new PrismaClient().$extends(
+  pagination({
+    pages: {
+      limit: 10, // set default limit to 10
+      includePageCount: true, // include counters by default
+    },
+    cursor: {
+      limit: 10, // set default limit to 10
+
+      // set default cursor serialization/deserialization
+      getCursor(user: UserType) {
+        // ...
+      },
+      parseCursor(cursor) {
+        // ...
+      },
+    },
+  })
+);
+```
+
+When using the extension on some models, you need to use `createPaginator` function to set the default values:
+
+```ts
+import { PrismaClient } from "@prisma/client";
+import { createPaginator } from "prisma-extension-pagination";
+
+const paginate = createPaginator({
+  // available settings are the same as above
+  pages: {
+    // ...
+  },
+  cursor: {
+    //...
+  },
+});
+
+// You can create many paginators with different settings.
+// They can be reused for different models.
+
+const prisma = new PrismaClient().$extends({
+  model: {
+    user: {
+      paginate,
+    },
+    post: {
+      paginate,
+    },
+  },
+});
+```
+
+## Usage
 
 ### Page number pagination
 
 Page number pagination uses `limit` to select a limited range and `page` to load a specific page of results.
+
+- [Load first page](#load-first-page)
+- [Load specific page](#load-specific-page)
+- [Calculate page count](#calculate-page-count)
 
 #### Load first page
 
@@ -117,6 +179,11 @@ const [users, meta] = prisma.user
 Cursor-based pagination uses `limit` to select a limited range
 and `before` or `after` to return a set of results before or after a given cursor.
 
+- [Load first records](#load-first-records)
+- [Load next page](#load-next-page)
+- [Load previous page](#load-previous-page)
+- [Custom cursor serialization](#custom-cursor-serialization)
+
 #### Load first records
 
 ```ts
@@ -177,12 +244,14 @@ const [users, meta] = prisma.user
 }
 ```
 
-#### Custom cursor
+#### Custom cursor serialization
 
 ```ts
 const getCustomCursor = (postId: number, userId: number) =>
   [postId, userId].join(":");
 
+const parseCustomCursor = (cursor: string) =>
+  cursor.split(":");
 
 const [results, meta] = await prisma.postOnUser
   .paginate({
@@ -202,7 +271,7 @@ const [results, meta] = await prisma.postOnUser
 
     // custom cursor deserialization
     parseCursor(cursor) {
-      const [postId, userId] = cursor.split(":");
+      const [postId, userId] = parseCustomCursor(cursor);
 
       return {
         userId_postId: {

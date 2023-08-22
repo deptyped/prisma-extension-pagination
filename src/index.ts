@@ -1,4 +1,4 @@
-import { extension, paginate } from "./extension";
+import { extension, paginate, createPaginator } from "./extension";
 export {
   PageNumberPaginationOptions,
   PageNumberPaginationMeta,
@@ -8,4 +8,4 @@ export {
 
 export default extension;
 
-export { paginate };
+export { paginate, createPaginator };

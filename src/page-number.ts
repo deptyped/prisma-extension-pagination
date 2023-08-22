@@ -6,12 +6,10 @@ import {
   PrismaQuery,
 } from "./types";
 
-type PaginateWithPagesOptions = Required<PageNumberPaginationOptions>;
-
 export const paginateWithPages = async (
   model: PrismaModel,
   query: PrismaQuery,
-  { page, limit, includePageCount }: PaginateWithPagesOptions,
+  { page, limit, includePageCount }: Required<PageNumberPaginationOptions>,
 ): Promise<[unknown, PageNumberPaginationMeta<typeof includePageCount>]> => {
   const previousPage = page > 1 ? page - 1 : null;
 
