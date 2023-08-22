@@ -13,7 +13,7 @@ Prisma Client extension for pagination.
 ## Installation
 
 ```bash
-npm i prisma-extension-pagination@next
+npm i prisma-extension-pagination
 ```
 
 ### Install extension to all models
@@ -25,7 +25,7 @@ import pagination from "prisma-extension-pagination";
 const prisma = new PrismaClient().$extends(pagination());
 ```
 
-### Install extension on some model
+### Install extension on some models
 
 ```ts
 import { PrismaClient } from "@prisma/client";
