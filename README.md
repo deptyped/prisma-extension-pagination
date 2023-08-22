@@ -4,6 +4,9 @@
 
 Prisma Client extension for pagination.
 
+> **Note**
+> [Breaking change in `0.5.0`](https://github.com/deptyped/prisma-extension-pagination/releases/tag/v0.5.0)
+
 ## Features
 
 - [Page number pagination](#page-number-pagination)
