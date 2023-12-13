@@ -8,4 +8,4 @@ export {
 
 export default extension;
 
-export { paginate, createPaginator };
+export { extension as pagination, paginate, createPaginator };

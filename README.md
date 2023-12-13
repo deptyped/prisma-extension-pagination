@@ -23,7 +23,7 @@ npm i prisma-extension-pagination
 
 ```ts
 import { PrismaClient } from "@prisma/client";
-import pagination from "prisma-extension-pagination";
+import { pagination } from "prisma-extension-pagination";
 
 const prisma = new PrismaClient().$extends(pagination());
 ```
@@ -47,7 +47,7 @@ const prisma = new PrismaClient().$extends({
 
 ```ts
 import { PrismaClient } from "@prisma/client";
-import pagination from "prisma-extension-pagination";
+import { pagination } from "prisma-extension-pagination";
 
 const prisma = new PrismaClient().$extends(
   pagination({
