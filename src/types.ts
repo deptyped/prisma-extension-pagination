@@ -26,19 +26,19 @@ export type PageNumberCounters = {
 };
 
 export type PageNumberPaginationMeta<
-  TWithCounters extends boolean | undefined = false,
+  TWithCounters extends boolean | undefined = false
 > = TWithCounters extends true
   ? PageNumberPagination & PageNumberCounters
   : PageNumberPagination;
 
-export type GetCursorFunction<R> = (result: R) => string;
+export type GetCursorFunction<R> = (result: R) => string | number;
 
-export type ParseCursorFunction<C> = (cursor: string) => C;
+export type ParseCursorFunction<C> = (cursor: string | number) => C;
 
 export type CursorPaginationOptions<Result, Condition> = {
   limit: number;
-  after?: string;
-  before?: string;
+  after?: string | number;
+  before?: string | number;
   getCursor?: GetCursorFunction<Result>;
   parseCursor?: ParseCursorFunction<Condition>;
 };
@@ -46,6 +46,6 @@ export type CursorPaginationOptions<Result, Condition> = {
 export type CursorPaginationMeta = {
   hasPreviousPage: boolean;
   hasNextPage: boolean;
-  startCursor: string | null;
-  endCursor: string | null;
+  startCursor: string | number | null;
+  endCursor: string | number | null;
 };
