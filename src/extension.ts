@@ -17,15 +17,15 @@ type Paginator<O extends PaginatorOptions> = <T, A>(
   args?: Prisma.Exact<
     A,
     Omit<Prisma.Args<T, "findMany">, "cursor" | "take" | "skip">
-  >,
+  >
 ) => {
   withPages: O["pages"] extends { limit: number } // if global limit provided
     ? <
         TOptions extends Omit<P, "limit">,
-        P extends PageNumberPaginationOptions,
+        P extends PageNumberPaginationOptions
       >(
         // make limit optional
-        options?: TOptions & { limit?: P["limit"] },
+        options?: TOptions & { limit?: P["limit"] }
       ) => Promise<
         [
           Prisma.Result<T, A, "findMany">,
@@ -38,14 +38,14 @@ type Paginator<O extends PaginatorOptions> = <T, A>(
               ? O["pages"]["includePageCount"]
               : // else
                 false
-          >,
+          >
         ]
       >
     : <
         TOptions extends PageNumberPaginationOptions,
-        P extends PageNumberPaginationOptions,
+        P extends PageNumberPaginationOptions
       >(
-        options: TOptions & { limit: P["limit"] },
+        options: TOptions & { limit: P["limit"] }
       ) => Promise<
         [
           Prisma.Result<T, A, "findMany">,
@@ -57,7 +57,7 @@ type Paginator<O extends PaginatorOptions> = <T, A>(
               O["pages"] extends { includePageCount: boolean }
               ? O["pages"]["includePageCount"]
               : false
-          >,
+          >
         ]
       >;
 
@@ -67,19 +67,19 @@ type Paginator<O extends PaginatorOptions> = <T, A>(
         P extends CursorPaginationOptions<
           Prisma.Result<T, A, "findMany">[number],
           NonNullable<Prisma.Args<T, "findMany">["cursor"]>
-        >,
+        >
       >(
         // make limit optional
-        options?: TOptions & { limit?: P["limit"] },
+        options?: TOptions & { limit?: P["limit"] }
       ) => Promise<[Prisma.Result<T, A, "findMany">, CursorPaginationMeta]>
     : <
         TOptions extends Omit<P, "limit">,
         P extends CursorPaginationOptions<
           Prisma.Result<T, A, "findMany">[number],
           NonNullable<Prisma.Args<T, "findMany">["cursor"]>
-        >,
+        >
       >(
-        options: TOptions & { limit: P["limit"] },
+        options: TOptions & { limit: P["limit"] }
       ) => Promise<[Prisma.Result<T, A, "findMany">, CursorPaginationMeta]>;
 };
 
@@ -98,7 +98,7 @@ type PaginatorOptions = {
 };
 
 export const createPaginator = <O extends PaginatorOptions>(
-  globalOptions?: O,
+  globalOptions?: O
 ): Paginator<O> =>
   function paginate(this, args) {
     return {
@@ -139,21 +139,11 @@ export const createPaginator = <O extends PaginatorOptions>(
         const { limit, after, before, getCursor, parseCursor } = {
           // @ts-expect-error actual fields of the model are not known
           getCursor({ id }) {
-            if (typeof id !== "number") {
-              throw new Error("Unable to serialize cursor");
-            }
-
-            return id.toString();
+            return id;
           },
           parseCursor(cursor) {
-            const id = parseInt(cursor, 10);
-
-            if (Number.isNaN(id)) {
-              throw new Error("Unable to parse cursor");
-            }
-
             return {
-              id,
+              id: cursor,
             };
           },
           ...globalOptions?.cursor,
@@ -173,7 +163,7 @@ export const createPaginator = <O extends PaginatorOptions>(
 
         if (typeof after === "string" && typeof before === "string") {
           throw new Error(
-            "Invalid cursor. Options after and before cannot be provided at the same time",
+            "Invalid cursor. Options after and before cannot be provided at the same time"
           );
         }
 
