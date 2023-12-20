@@ -17,13 +17,13 @@ export const paginateWithCursor = async <R, C>(
     getCursor,
     parseCursor,
     limit,
-  }: PaginateWithCursorOptions<R, C>,
+  }: PaginateWithCursorOptions<R, C>
 ): Promise<[unknown, CursorPaginationMeta]> => {
   let results;
   let hasPreviousPage = false;
   let hasNextPage = false;
 
-  if (typeof before === "string") {
+  if (typeof before === "string" || typeof before === "number") {
     const cursor = parseCursor(before);
 
     let nextResult;
@@ -46,7 +46,7 @@ export const paginateWithCursor = async <R, C>(
       hasPreviousPage = Boolean(results.shift());
     }
     hasNextPage = Boolean(nextResult.length);
-  } else if (typeof after === "string") {
+  } else if (typeof after === "string" || typeof after === "number") {
     const cursor = parseCursor(after);
 
     let previousResult;
