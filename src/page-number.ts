@@ -23,7 +23,7 @@ export const paginateWithPages = async (
         ...query,
         ...{
           skip: (page - 1) * (limit ?? 0),
-          take: limit,
+          take: limit === null ? undefined : limit,
         },
       }),
       model.count({

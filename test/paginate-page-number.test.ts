@@ -210,6 +210,7 @@ describe("paginate with pages", () => {
   test("limit: null should return all results", async () => {
     const [results, meta] = await prisma.user.paginate().withPages({
       limit: null,
+      includePageCount: true,
     });
 
     const expectedResults = await prisma.user.findMany();
@@ -221,6 +222,8 @@ describe("paginate with pages", () => {
       isLastPage: true,
       previousPage: null,
       nextPage: null,
-    } satisfies PageNumberPaginationMeta);
+      pageCount: 1,
+      totalCount: 20,
+    } satisfies PageNumberPaginationMeta<true>);
   });
 });
