@@ -206,4 +206,21 @@ describe("paginate with pages", () => {
       prisma.user.paginate().withPages(),
     ).rejects.toThrow(Error);
   });
+
+  test("limit: null should return all results", async () => {
+    const [results, meta] = await prisma.user.paginate().withPages({
+      limit: null,
+    });
+
+    const expectedResults = await prisma.user.findMany();
+
+    expect(results).toStrictEqual(expectedResults);
+    expect(meta).toStrictEqual({
+      currentPage: 1,
+      isFirstPage: true,
+      isLastPage: true,
+      previousPage: null,
+      nextPage: null,
+    } satisfies PageNumberPaginationMeta);
+  });
 });

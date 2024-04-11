@@ -13,7 +13,8 @@
     "test": "jest",
     "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\"",
     "format": "npm run lint -- --fix",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "setup": "prisma generate && prisma migrate deploy"
   },
   "repository": {
     "type": "git",
