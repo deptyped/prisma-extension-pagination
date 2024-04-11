@@ -282,4 +282,21 @@ describe("paginate with cursor", () => {
       prisma.user.paginate().withCursor(),
     ).rejects.toThrow(Error);
   });
+
+  test("limit: null should return all results", async () => {
+    const [results, meta] = await prisma.user.paginate().withCursor({
+      limit: null,
+    });
+
+    const expectedResults = await prisma.user.findMany();
+
+    expect(results).toStrictEqual(expectedResults);
+
+    expect(meta).toStrictEqual({
+      hasPreviousPage: false,
+      hasNextPage: false,
+      startCursor: expectedResults.at(0)!.id.toString(),
+      endCursor: expectedResults.at(-1)!.id.toString(),
+    } satisfies CursorPaginationMeta);
+  });
 });
