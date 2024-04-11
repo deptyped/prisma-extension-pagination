@@ -114,7 +114,7 @@ Page number pagination uses `limit` to select a limited range and `page` to load
 #### Load first page
 
 ```ts
-const [users, meta] = prisma.user
+const [users, meta] = await prisma.user
   .paginate({
     select: {
       id: true,
@@ -137,7 +137,7 @@ const [users, meta] = prisma.user
 #### Load specific page
 
 ```ts
-const [users, meta] = prisma.user
+const [users, meta] = await prisma.user
   .paginate()
   .withPages({
     limit: 10,
@@ -157,7 +157,7 @@ const [users, meta] = prisma.user
 #### Calculate page count
 
 ```ts
-const [users, meta] = prisma.user
+const [users, meta] = await prisma.user
   .paginate()
   .withPages({
     limit: 10,
@@ -191,7 +191,7 @@ and `before` or `after` to return a set of results before or after a given curso
 #### Load first records
 
 ```ts
-const [users, meta] = prisma.user
+const [users, meta] = await prisma.user
   .paginate({
     select: {
       id: true,
@@ -213,7 +213,7 @@ const [users, meta] = prisma.user
 #### Load next page
 
 ```ts
-const [users, meta] = prisma.user
+const [users, meta] = await prisma.user
   .paginate()
   .withCursor({
     limit: 10,
@@ -232,7 +232,7 @@ const [users, meta] = prisma.user
 #### Load previous page
 
 ```ts
-const [users, meta] = prisma.user
+const [users, meta] = await prisma.user
   .paginate()
   .withCursor({
     limit: 10,
