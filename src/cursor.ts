@@ -32,7 +32,7 @@ export const paginateWithCursor = async <R, C>(
         ...query,
         cursor,
         skip: 1,
-        take: -limit - 1,
+        take: limit === null ? undefined : -limit - 1,
       }),
       model.findMany({
         ...query,
@@ -42,7 +42,7 @@ export const paginateWithCursor = async <R, C>(
       }),
     ]);
 
-    if (results.length > limit) {
+    if (limit !== null && results.length > limit) {
       hasPreviousPage = Boolean(results.shift());
     }
     hasNextPage = Boolean(nextResult.length);
@@ -55,7 +55,7 @@ export const paginateWithCursor = async <R, C>(
         ...query,
         cursor,
         skip: 1,
-        take: limit + 1,
+        take: limit === null ? undefined : limit + 1,
       }),
       model.findMany({
         ...query,
@@ -66,17 +66,17 @@ export const paginateWithCursor = async <R, C>(
     ]);
 
     hasPreviousPage = Boolean(previousResult.length);
-    if (results.length > limit) {
+    if (limit !== null && results.length > limit) {
       hasNextPage = Boolean(results.pop());
     }
   } else {
     results = await model.findMany({
       ...query,
-      take: limit + 1,
+      take: limit === null ? undefined : limit + 1,
     });
 
     hasPreviousPage = false;
-    if (results.length > limit) {
+    if (limit !== null && results.length > limit) {
       hasNextPage = Boolean(results.pop());
     }
   }

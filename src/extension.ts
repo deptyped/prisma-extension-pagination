@@ -118,10 +118,10 @@ export const createPaginator = <O extends PaginatorOptions>(
           throw new Error("Invalid page value");
         }
 
-        if (typeof limit !== "number") {
+        if (limit !== null && typeof limit !== "number") {
           throw new Error("Missing limit value");
         }
-        if (limit < 1 || limit > Number.MAX_SAFE_INTEGER) {
+        if (limit !== null && (limit < 1 || limit > Number.MAX_SAFE_INTEGER)) {
           throw new Error("Invalid limit value");
         }
 
@@ -163,11 +163,11 @@ export const createPaginator = <O extends PaginatorOptions>(
           "limit" | "after" | "before"
         >;
 
-        if (typeof limit !== "number") {
+        if (limit !== null && typeof limit !== "number") {
           throw new Error("Missing limit value");
         }
 
-        if (limit < 1 || limit > Number.MAX_SAFE_INTEGER) {
+        if (limit !== null && (limit < 1 || limit > Number.MAX_SAFE_INTEGER)) {
           throw new Error("Invalid limit value");
         }
 

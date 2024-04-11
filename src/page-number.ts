@@ -22,7 +22,7 @@ export const paginateWithPages = async (
       model.findMany({
         ...query,
         ...{
-          skip: (page - 1) * limit,
+          skip: (page - 1) * (limit ?? 0),
           take: limit,
         },
       }),
@@ -33,18 +33,18 @@ export const paginateWithPages = async (
       }),
     ]);
 
-    pageCount = Math.ceil(totalCount / limit);
+    pageCount = limit === null ? 1 : Math.ceil(totalCount / limit);
     nextPage = page < pageCount ? page + 1 : null;
   } else {
     results = await model.findMany({
       ...query,
       ...{
-        skip: (page - 1) * limit,
-        take: limit + 1,
+        skip: (page - 1) * (limit ?? 0),
+        take: limit === null ? undefined : limit + 1,
       },
     });
 
-    nextPage = results.length > limit ? page + 1 : null;
+    nextPage = limit === null ? null : results.length > limit ? page + 1 : null;
     if (nextPage) {
       results.pop();
     }

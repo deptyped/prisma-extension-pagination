@@ -7,7 +7,7 @@ export type PrismaQuery = {
 };
 
 export type PageNumberPaginationOptions = {
-  limit: number;
+  limit: number | null;
   page?: number;
   includePageCount?: boolean;
 };
@@ -36,7 +36,7 @@ export type GetCursorFunction<R> = (result: R) => string;
 export type ParseCursorFunction<C> = (cursor: string) => C;
 
 export type CursorPaginationOptions<Result, Condition> = {
-  limit: number;
+  limit: number | null;
   after?: string;
   before?: string;
   getCursor?: GetCursorFunction<Result>;

@@ -186,6 +186,7 @@ and `before` or `after` to return a set of results before or after a given curso
 - [Load next page](#load-next-page)
 - [Load previous page](#load-previous-page)
 - [Custom cursor serialization](#custom-cursor-serialization)
+- [Load all results](#load-all-results)
 
 #### Load first records
 
@@ -293,6 +294,10 @@ const [results, meta] = await prisma.postOnUser
   endCursor: "1:11"
 }
 ```
+
+### Load all results
+
+Sometimes it's useful to return all results, if you need to do that, you can pass `limit: null`.
 
 ## License
 
