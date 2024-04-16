@@ -34,10 +34,10 @@ type Paginator<O extends PaginatorOptions> = <T, A>(
             TOptions extends { includePageCount: boolean }
               ? TOptions["includePageCount"]
               : // else if global includePageCount provided
-              O["pages"] extends { includePageCount: boolean }
-              ? O["pages"]["includePageCount"]
-              : // else
-                false
+                O["pages"] extends { includePageCount: boolean }
+                ? O["pages"]["includePageCount"]
+                : // else
+                  false
           >,
         ]
       >
@@ -54,9 +54,9 @@ type Paginator<O extends PaginatorOptions> = <T, A>(
             TOptions extends { includePageCount: boolean }
               ? TOptions["includePageCount"]
               : // else if global includePageCount provided
-              O["pages"] extends { includePageCount: boolean }
-              ? O["pages"]["includePageCount"]
-              : false
+                O["pages"] extends { includePageCount: boolean }
+                ? O["pages"]["includePageCount"]
+                : false
           >,
         ]
       >;
