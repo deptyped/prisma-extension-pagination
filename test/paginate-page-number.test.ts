@@ -228,17 +228,17 @@ describe("paginate with pages", () => {
   });
 
   test("regression: `page: undefined` should be the same as `page: 1`", async () => {
-    const result1 = await prisma.user.paginate().withPages({
-      limit: null,
-      includePageCount: true,
-      page: 1,
-    });
-    const result2 = await prisma.user.paginate().withPages({
-      limit: null,
-      includePageCount: true,
-      page: undefined, // <-- this would crash before
-    });
+    function getResults(page?: number) {
+      return prisma.user.paginate().withPages({
+        limit: null,
+        includePageCount: true,
+        page,
+      });
+    }
 
-    expect(result1).toStrictEqual(result2);
+    expect(
+      // this would crash before as `page` is `undefined`
+      await getResults(),
+    ).toStrictEqual(await getResults(1));
   });
 });
