@@ -103,9 +103,11 @@ export const createPaginator = <O extends PaginatorOptions>(
   function paginate(this, args) {
     return {
       withPages: async (options = {}) => {
-        const { page, limit, includePageCount } = {
-          page: 1,
-          includePageCount: false,
+        const {
+          page = 1,
+          limit,
+          includePageCount = false,
+        } = {
           ...globalOptions?.pages,
           ...(options as PageNumberPaginationOptions),
         } satisfies Omit<PageNumberPaginationOptions, "limit">;
@@ -136,16 +138,18 @@ export const createPaginator = <O extends PaginatorOptions>(
       },
 
       withCursor: async (options = {}) => {
-        const { limit, after, before, getCursor, parseCursor } = {
-          // @ts-expect-error actual fields of the model are not known
-          getCursor({ id }) {
+        const {
+          limit,
+          after,
+          before,
+          getCursor = ({ id }) => {
             if (typeof id !== "number") {
               throw new Error("Unable to serialize cursor");
             }
 
             return id.toString();
           },
-          parseCursor(cursor) {
+          parseCursor = (cursor) => {
             const id = parseInt(cursor, 10);
 
             if (Number.isNaN(id)) {
@@ -156,6 +160,7 @@ export const createPaginator = <O extends PaginatorOptions>(
               id,
             };
           },
+        } = {
           ...globalOptions?.cursor,
           ...(options as CursorPaginationOptions<unknown, unknown>),
         } satisfies Omit<

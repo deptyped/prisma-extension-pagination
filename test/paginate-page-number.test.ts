@@ -226,4 +226,19 @@ describe("paginate with pages", () => {
       totalCount: 20,
     } satisfies PageNumberPaginationMeta<true>);
   });
+
+  test("regression: `page: undefined` should be the same as `page: 1`", async () => {
+    function getResults(page?: number) {
+      return prisma.user.paginate().withPages({
+        limit: null,
+        includePageCount: true,
+        page,
+      });
+    }
+
+    expect(
+      // this would crash before as `page` is `undefined`
+      await getResults(),
+    ).toStrictEqual(await getResults(1));
+  });
 });
