@@ -34,10 +34,10 @@ type Paginator<O extends PaginatorOptions> = <T, A>(
             TOptions extends { includePageCount: boolean }
               ? TOptions["includePageCount"]
               : // else if global includePageCount provided
-                O["pages"] extends { includePageCount: boolean }
-                ? O["pages"]["includePageCount"]
-                : // else
-                  false
+              O["pages"] extends { includePageCount: boolean }
+              ? O["pages"]["includePageCount"]
+              : // else
+                false
           >,
         ]
       >
@@ -54,9 +54,9 @@ type Paginator<O extends PaginatorOptions> = <T, A>(
             TOptions extends { includePageCount: boolean }
               ? TOptions["includePageCount"]
               : // else if global includePageCount provided
-                O["pages"] extends { includePageCount: boolean }
-                ? O["pages"]["includePageCount"]
-                : false
+              O["pages"] extends { includePageCount: boolean }
+              ? O["pages"]["includePageCount"]
+              : false
           >,
         ]
       >;
@@ -103,8 +103,11 @@ export const createPaginator = <O extends PaginatorOptions>(
   function paginate(this, args) {
     return {
       withPages: async (options = {}) => {
-        const { page, limit, includePageCount } = {
-          page: 1,
+        const {
+          page = 1,
+          limit,
+          includePageCount,
+        } = {
           includePageCount: false,
           ...globalOptions?.pages,
           ...(options as PageNumberPaginationOptions),
