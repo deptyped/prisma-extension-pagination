@@ -241,4 +241,39 @@ describe("paginate with pages", () => {
       await getResults(),
     ).toStrictEqual(await getResults(1));
   });
+
+  // TODO: remove .skip when omit becomes generally available
+  test.skip("using omit in query should not cause error", async () => {
+    const limit = USERS_PER_PAGE;
+    const [results, meta] = await prisma.user
+      .paginate({
+        // @ts-expect-error preview feature
+        omit: {
+          name: true,
+        },
+      })
+      .withPages({
+        limit,
+        includePageCount: true,
+      });
+
+    const expectedResults = await prisma.user.findMany({
+      // @ts-expect-error preview feature
+      omit: {
+        name: true,
+      },
+      take: limit,
+    });
+
+    expect(results).toStrictEqual(expectedResults);
+    expect(meta).toStrictEqual({
+      currentPage: 1,
+      isFirstPage: true,
+      isLastPage: false,
+      previousPage: null,
+      nextPage: 2,
+      pageCount: 5,
+      totalCount: 20,
+    } satisfies PageNumberPaginationMeta<true>);
+  });
 });
