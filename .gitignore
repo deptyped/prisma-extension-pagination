@@ -134,3 +134,6 @@ data/
 # Test Database
 prisma/*.db
 prisma/*.db-journal
+
+# JetBrains IDE
+.idea

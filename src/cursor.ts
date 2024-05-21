@@ -31,8 +31,7 @@ export const paginateWithCursor = async <R, C>(
       model.findMany({
         ...query,
         cursor,
-        skip: 1,
-        take: limit === null ? undefined : -limit - 1,
+        take: limit === null ? undefined : -limit - 2,
       }),
       model.findMany({
         ...query,
@@ -41,6 +40,15 @@ export const paginateWithCursor = async <R, C>(
         take: 1,
       }),
     ]);
+
+    if (
+      JSON.stringify(parseCursor(getCursor(results[results.length - 1]))) ===
+      JSON.stringify(cursor)
+    ) {
+      results.pop();
+    } else if (limit !== null && results.length === limit + 2) {
+      results.shift();
+    }
 
     if (limit !== null && results.length > limit) {
       hasPreviousPage = Boolean(results.shift());
@@ -54,8 +62,7 @@ export const paginateWithCursor = async <R, C>(
       model.findMany({
         ...query,
         cursor,
-        skip: 1,
-        take: limit === null ? undefined : limit + 1,
+        take: limit === null ? undefined : limit + 2,
       }),
       model.findMany({
         ...query,
@@ -64,6 +71,15 @@ export const paginateWithCursor = async <R, C>(
         take: -1,
       }),
     ]);
+
+    if (
+      JSON.stringify(parseCursor(getCursor(results[0]))) ===
+      JSON.stringify(cursor)
+    ) {
+      results.shift();
+    } else if (limit !== null && results.length === limit + 2) {
+      results.pop();
+    }
 
     hasPreviousPage = Boolean(previousResult.length);
     if (limit !== null && results.length > limit) {
