@@ -17,17 +17,42 @@ export const paginateWithPages = async (
   let nextPage;
   let pageCount = null;
   let totalCount = null;
+  const {
+    distinct,
+    select,
+    omit,
+    include,
+    orderBy,
+    where,
+    relationLoadStrategy,
+  } = query;
+
+  const findManyArgs = {
+    distinct,
+    select,
+    omit,
+    include,
+    orderBy,
+    where,
+    relationLoadStrategy,
+  };
+
+  const countArgs = {
+    orderBy,
+    where,
+  };
+
   if (includePageCount) {
     [results, totalCount] = await Promise.all([
       model.findMany({
-        ...query,
+        ...findManyArgs,
         ...{
           skip: (page - 1) * (limit ?? 0),
           take: limit === null ? undefined : limit,
         },
       }),
       model.count({
-        ...query,
+        ...countArgs,
         ...resetSelection,
         ...resetOrdering,
       }),
@@ -37,7 +62,7 @@ export const paginateWithPages = async (
     nextPage = page < pageCount ? page + 1 : null;
   } else {
     results = await model.findMany({
-      ...query,
+      ...findManyArgs,
       ...{
         skip: (page - 1) * (limit ?? 0),
         take: limit === null ? undefined : limit + 1,
