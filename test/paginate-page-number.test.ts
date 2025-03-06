@@ -247,7 +247,6 @@ describe("paginate with pages", () => {
     const limit = USERS_PER_PAGE;
     const [results, meta] = await prisma.user
       .paginate({
-        // @ts-expect-error preview feature
         omit: {
           name: true,
         },
@@ -258,7 +257,6 @@ describe("paginate with pages", () => {
       });
 
     const expectedResults = await prisma.user.findMany({
-      // @ts-expect-error preview feature
       omit: {
         name: true,
       },
