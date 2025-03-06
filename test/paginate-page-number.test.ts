@@ -243,7 +243,7 @@ describe("paginate with pages", () => {
   });
 
   // TODO: remove .skip when omit becomes generally available
-  test.skip("using omit in query should not cause error", async () => {
+  test("using omit in query should not cause error", async () => {
     const limit = USERS_PER_PAGE;
     const [results, meta] = await prisma.user
       .paginate({
