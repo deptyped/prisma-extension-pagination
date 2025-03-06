@@ -44,7 +44,10 @@ export const paginateWithPages = async (
         },
       }),
       model.count({
-        ...query,
+        ...{
+          orderBy,
+          where,
+        },
         ...resetSelection,
         ...resetOrdering,
       }),
