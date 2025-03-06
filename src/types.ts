@@ -3,6 +3,12 @@ export type PrismaModel = {
 };
 
 export type PrismaQuery = {
+  relationLoadStrategy: "join" | "query";
+  distinct?: string[];
+  select?: Record<string, unknown>;
+  omit?: Record<string, boolean>;
+  include?: Record<string, unknown>;
+  orderBy?: Record<string, "desc" | "asc">;
   where: Record<string, unknown>;
 };
 
