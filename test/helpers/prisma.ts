@@ -1,5 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
+import { PrismaClient } from '../../prisma/generated/client.js'
 
-import pagination from "../../src";
+import pagination from '../../src/index.js'
 
-export const prisma = new PrismaClient().$extends(pagination());
+const adapter = new PrismaBetterSqlite3({ url: 'file:./prisma/test.db' })
+
+export const prismaRaw = new PrismaClient({ adapter })
+export const prisma = new PrismaClient({ adapter }).$extends(pagination())

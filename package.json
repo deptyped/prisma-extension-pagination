@@ -2,6 +2,22 @@
   "name": "prisma-extension-pagination",
   "version": "0.7.5",
   "description": "Prisma Client extension for pagination",
+  "author": "deptyped <deptyped@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/deptyped/prisma-extension-pagination#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deptyped/prisma-extension-pagination.git"
+  },
+  "bugs": {
+    "url": "https://github.com/deptyped/prisma-extension-pagination/issues"
+  },
+  "keywords": [
+    "node",
+    "prisma",
+    "prisma-client",
+    "prisma-extension"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -10,43 +26,23 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
-    "test": "jest",
+    "test": "vitest run",
     "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\"",
     "format": "npm run lint -- --fix",
     "prepare": "npm run build",
     "setup": "prisma generate && prisma migrate deploy"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/deptyped/prisma-extension-pagination.git"
-  },
-  "keywords": [
-    "node",
-    "prisma",
-    "prisma-client",
-    "prisma-extension"
-  ],
-  "author": "deptyped <deptyped@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/deptyped/prisma-extension-pagination/issues"
-  },
-  "homepage": "https://github.com/deptyped/prisma-extension-pagination#readme",
   "peerDependencies": {
     "@prisma/client": "^4.9.0 || ^5.0.0 || ^6.0.0"
   },
   "devDependencies": {
-    "@prisma/client": "^6.0.1",
-    "@types/jest": "^29.5.14",
-    "@types/node": "^20.12.7",
-    "@typescript-eslint/eslint-plugin": "^7.6.0",
-    "@typescript-eslint/parser": "^7.6.0",
-    "eslint": "^8.55.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "jest": "^29.7.0",
-    "prisma": "^6.0.1",
-    "ts-jest": "^29.2.5",
-    "typescript": "^5.7.2"
+    "@antfu/eslint-config": "^6.2.0",
+    "@prisma/adapter-better-sqlite3": "^7.0.0",
+    "@prisma/client": "^7.0.0",
+    "@types/node": "^24.10.1",
+    "eslint": "^9.39.1",
+    "prisma": "^7.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.13"
   }
 }

@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "lib": ["ES2016"],
-    "module": "CommonJS",
-    "moduleResolution": "node",
+    "target": "es2020",
+    "lib": ["ES2020"],
+    "module": "node20",
+    "moduleResolution": "node16",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "declaration": true,
     "outDir": "./dist"
   },

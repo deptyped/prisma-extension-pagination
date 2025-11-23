@@ -1,195 +1,194 @@
-import { CursorPaginationMeta } from "../src";
+import type { CursorPaginationMeta } from '../src'
+import { describe, expect, it } from 'vitest'
 
-import { prisma } from "./helpers/prisma";
-import { USERS_PER_PAGE } from "./helpers/constants";
-import { PrismaClient } from "@prisma/client";
+import pagination from '../src'
+import { USERS_PER_PAGE } from './helpers/constants'
+import { prisma, prismaRaw } from './helpers/prisma'
 
-import pagination from "../src";
+describe('paginate with cursor', () => {
+  it('accepts default options', async () => {
+    const limit = USERS_PER_PAGE
 
-describe("paginate with cursor", () => {
-  test("accepts default options", async () => {
-    const limit = USERS_PER_PAGE;
-
-    const prismaX = new PrismaClient().$extends(
+    const prismaX = prismaRaw.$extends(
       pagination({
         cursor: {
           limit,
         },
       }),
-    );
+    )
 
-    const [results, meta] = await prismaX.user.paginate().withCursor();
+    const [results, meta] = await prismaX.user.paginate().withCursor()
 
     const expectedResults = await prismaX.user.findMany({
       take: limit,
-    });
+    })
 
-    expect(results).toStrictEqual(expectedResults);
+    expect(results).toStrictEqual(expectedResults)
 
     expect(meta).toStrictEqual({
       hasPreviousPage: false,
       hasNextPage: true,
       startCursor: expectedResults[0].id.toString(),
       endCursor: expectedResults[expectedResults.length - 1].id.toString(),
-    } satisfies CursorPaginationMeta);
-  });
+    } satisfies CursorPaginationMeta)
+  })
 
-  test("override default options", async () => {
-    const limit = USERS_PER_PAGE;
+  it('override default options', async () => {
+    const limit = USERS_PER_PAGE
 
-    const prismaX = new PrismaClient().$extends(
+    const prismaX = prismaRaw.$extends(
       pagination({
         cursor: {
           limit: limit * 2,
         },
       }),
-    );
+    )
 
     const [results, meta] = await prismaX.user.paginate().withCursor({
       limit,
-    });
+    })
 
     const expectedResults = await prismaX.user.findMany({
       take: limit,
-    });
+    })
 
-    expect(results).toStrictEqual(expectedResults);
+    expect(results).toStrictEqual(expectedResults)
 
     expect(meta).toStrictEqual({
       hasPreviousPage: false,
       hasNextPage: true,
       startCursor: expectedResults[0].id.toString(),
       endCursor: expectedResults[expectedResults.length - 1].id.toString(),
-    } satisfies CursorPaginationMeta);
-  });
+    } satisfies CursorPaginationMeta)
+  })
 
-  test("load first page", async () => {
-    const limit = USERS_PER_PAGE;
+  it('load first page', async () => {
+    const limit = USERS_PER_PAGE
     const [results, meta] = await prisma.user.paginate().withCursor({
       limit,
-    });
+    })
 
     const expectedResults = await prisma.user.findMany({
       take: limit,
-    });
+    })
 
-    expect(results).toStrictEqual(expectedResults);
+    expect(results).toStrictEqual(expectedResults)
 
     expect(meta).toStrictEqual({
       hasPreviousPage: false,
       hasNextPage: true,
       startCursor: expectedResults[0].id.toString(),
       endCursor: expectedResults[expectedResults.length - 1].id.toString(),
-    } satisfies CursorPaginationMeta);
-  });
+    } satisfies CursorPaginationMeta)
+  })
 
-  test("load next page", async () => {
-    const limit = USERS_PER_PAGE;
+  it('load next page', async () => {
+    const limit = USERS_PER_PAGE
 
     const { id: cursor } = await prisma.user.findFirstOrThrow({
       skip: limit - 1,
-    });
+    })
 
     const [results, meta] = await prisma.user.paginate().withCursor({
       limit,
       after: cursor.toString(),
-    });
+    })
 
     const expectedResults = await prisma.user.findMany({
       skip: limit,
       take: limit,
-    });
+    })
 
-    expect(results).toStrictEqual(expectedResults);
+    expect(results).toStrictEqual(expectedResults)
 
     expect(meta).toStrictEqual({
       hasPreviousPage: true,
       hasNextPage: true,
       startCursor: expectedResults[0].id.toString(),
       endCursor: expectedResults[expectedResults.length - 1].id.toString(),
-    } satisfies CursorPaginationMeta);
-  });
+    } satisfies CursorPaginationMeta)
+  })
 
-  test("load previous page", async () => {
-    const limit = USERS_PER_PAGE;
+  it('load previous page', async () => {
+    const limit = USERS_PER_PAGE
 
     const { id: cursor } = await prisma.user.findFirstOrThrow({
       skip: limit * 2,
-    });
+    })
 
     const [results, meta] = await prisma.user.paginate().withCursor({
       limit,
       before: cursor.toString(),
-    });
+    })
 
     const expectedResults = await prisma.user.findMany({
       skip: limit,
       take: limit,
-    });
+    })
 
-    expect(results).toStrictEqual(expectedResults);
+    expect(results).toStrictEqual(expectedResults)
 
     expect(meta).toStrictEqual({
       hasPreviousPage: true,
       hasNextPage: true,
       startCursor: expectedResults[0].id.toString(),
       endCursor: expectedResults[expectedResults.length - 1].id.toString(),
-    } satisfies CursorPaginationMeta);
-  });
+    } satisfies CursorPaginationMeta)
+  })
 
-  test("load last page", async () => {
-    const limit = USERS_PER_PAGE;
+  it('load last page', async () => {
+    const limit = USERS_PER_PAGE
 
     const { id: cursor } = await prisma.user.findFirstOrThrow({
       skip: 1,
       take: -1,
-    });
+    })
 
     const [results, meta] = await prisma.user.paginate().withCursor({
       limit,
       after: cursor.toString(),
-    });
+    })
 
     const expectedResults = await prisma.user.findMany({
       take: -1,
-    });
+    })
 
-    expect(results).toStrictEqual(expectedResults);
+    expect(results).toStrictEqual(expectedResults)
 
     expect(meta).toStrictEqual({
       hasPreviousPage: true,
       hasNextPage: false,
       startCursor: expectedResults[0].id.toString(),
       endCursor: expectedResults[expectedResults.length - 1].id.toString(),
-    } satisfies CursorPaginationMeta);
-  });
+    } satisfies CursorPaginationMeta)
+  })
 
-  test("load next to last page", async () => {
-    const limit = USERS_PER_PAGE;
+  it('load next to last page', async () => {
+    const limit = USERS_PER_PAGE
 
     const { id: cursor } = await prisma.user.findFirstOrThrow({
       take: -1,
-    });
+    })
 
     const [results, meta] = await prisma.user.paginate().withCursor({
       limit,
       after: cursor.toString(),
-    });
+    })
 
-    expect(results).toStrictEqual([]);
+    expect(results).toStrictEqual([])
 
     expect(meta).toStrictEqual({
       hasPreviousPage: true,
       hasNextPage: false,
       startCursor: null,
       endCursor: null,
-    } satisfies CursorPaginationMeta);
-  });
+    } satisfies CursorPaginationMeta)
+  })
 
-  test("custom cursor", async () => {
-    const limit = USERS_PER_PAGE;
+  it('custom cursor', async () => {
+    const limit = USERS_PER_PAGE
     const getCursor = (postId: number, userId: number) =>
-      [postId, userId].join(":");
+      [postId, userId].join(':')
 
     const { postId, userId } = await prisma.postOnUser.findFirstOrThrow({
       select: {
@@ -197,7 +196,7 @@ describe("paginate with cursor", () => {
         userId: true,
       },
       skip: 5,
-    });
+    })
 
     const [results, meta] = await prisma.postOnUser
       .paginate({
@@ -210,19 +209,19 @@ describe("paginate with cursor", () => {
         limit,
         after: getCursor(postId, userId),
         getCursor({ postId, userId }) {
-          return getCursor(postId, userId);
+          return getCursor(postId, userId)
         },
         parseCursor(cursor) {
-          const [postId, userId] = cursor.split(":");
+          const [postId, userId] = cursor.split(':')
 
           return {
             userId_postId: {
-              postId: parseInt(postId),
-              userId: parseInt(userId),
+              postId: Number.parseInt(postId),
+              userId: Number.parseInt(userId),
             },
-          };
+          }
         },
-      });
+      })
 
     const expectedResults = await prisma.postOnUser.findMany({
       select: {
@@ -231,9 +230,9 @@ describe("paginate with cursor", () => {
       },
       skip: 6,
       take: limit,
-    });
+    })
 
-    expect(results).toStrictEqual(expectedResults);
+    expect(results).toStrictEqual(expectedResults)
 
     expect(meta).toStrictEqual({
       hasPreviousPage: true,
@@ -246,57 +245,57 @@ describe("paginate with cursor", () => {
         expectedResults[expectedResults.length - 1].postId,
         expectedResults[expectedResults.length - 1].userId,
       ),
-    } satisfies CursorPaginationMeta);
-  });
+    } satisfies CursorPaginationMeta)
+  })
 
-  test("throw error if options are invalid", async () => {
+  it('throw error if options are invalid', async () => {
     await expect(
       prisma.user.paginate().withCursor({
         limit: 0,
       }),
-    ).rejects.toThrow(Error);
+    ).rejects.toThrow(Error)
 
     await expect(
       prisma.user.paginate().withCursor({
         limit: 1,
-        after: "1",
-        before: "1",
+        after: '1',
+        before: '1',
       }),
-    ).rejects.toThrow(Error);
+    ).rejects.toThrow(Error)
 
     await expect(
       prisma.user.paginate().withCursor({
         limit: 1,
-        after: "invalid",
+        after: 'invalid',
       }),
-    ).rejects.toThrow(Error);
+    ).rejects.toThrow(Error)
 
     await expect(
       prisma.postOnUser.paginate().withCursor({
         limit: 1,
       }),
-    ).rejects.toThrow("Unable to serialize cursor");
+    ).rejects.toThrow('Unable to serialize cursor')
 
     await expect(
       // @ts-expect-error to test
       prisma.user.paginate().withCursor(),
-    ).rejects.toThrow(Error);
-  });
+    ).rejects.toThrow(Error)
+  })
 
-  test("limit: null should return all results", async () => {
+  it('limit: null should return all results', async () => {
     const [results, meta] = await prisma.user.paginate().withCursor({
       limit: null,
-    });
+    })
 
-    const expectedResults = await prisma.user.findMany();
+    const expectedResults = await prisma.user.findMany()
 
-    expect(results).toStrictEqual(expectedResults);
+    expect(results).toStrictEqual(expectedResults)
 
     expect(meta).toStrictEqual({
       hasPreviousPage: false,
       hasNextPage: false,
       startCursor: expectedResults.at(0)!.id.toString(),
       endCursor: expectedResults.at(-1)!.id.toString(),
-    } satisfies CursorPaginationMeta);
-  });
-});
+    } satisfies CursorPaginationMeta)
+  })
+})
