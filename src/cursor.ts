@@ -1,30 +1,26 @@
-import { CursorPaginationMeta } from ".";
-import { resetSelection } from "./helpers";
-import { CursorPaginationOptions, PrismaModel, PrismaQuery } from "./types";
+import type { CursorPaginationMeta } from '.'
+import type { CursorPaginationOptions, PrismaModel, PrismaQuery } from './types'
+import { resetSelection } from './helpers'
 
 interface PaginateWithCursorOptions<R, C>
   extends CursorPaginationOptions<R, C> {
-  getCursor: NonNullable<CursorPaginationOptions<R, C>["getCursor"]>;
-  parseCursor: NonNullable<CursorPaginationOptions<R, C>["parseCursor"]>;
+  getCursor: NonNullable<CursorPaginationOptions<R, C>['getCursor']>
+  parseCursor: NonNullable<CursorPaginationOptions<R, C>['parseCursor']>
 }
 
-export const paginateWithCursor = async <R, C>(
-  model: PrismaModel,
-  query: PrismaQuery,
-  {
-    after,
-    before,
-    getCursor,
-    parseCursor,
-    limit,
-  }: PaginateWithCursorOptions<R, C>,
-): Promise<[unknown, CursorPaginationMeta]> => {
-  let results;
-  let hasPreviousPage = false;
-  let hasNextPage = false;
+export async function paginateWithCursor<R, C>(model: PrismaModel, query: PrismaQuery, {
+  after,
+  before,
+  getCursor,
+  parseCursor,
+  limit,
+}: PaginateWithCursorOptions<R, C>): Promise<[unknown, CursorPaginationMeta]> {
+  let results
+  let hasPreviousPage = false
+  let hasNextPage = false
 
-  if (typeof before === "string") {
-    const cursor = parseCursor(before);
+  if (typeof before === 'string') {
+    const cursor = parseCursor(before)
 
     let nextResult;
     [results, nextResult] = await Promise.all([
@@ -40,14 +36,15 @@ export const paginateWithCursor = async <R, C>(
         cursor,
         take: 1,
       }),
-    ]);
+    ])
 
     if (limit !== null && results.length > limit) {
-      hasPreviousPage = Boolean(results.shift());
+      hasPreviousPage = Boolean(results.shift())
     }
-    hasNextPage = Boolean(nextResult.length);
-  } else if (typeof after === "string") {
-    const cursor = parseCursor(after);
+    hasNextPage = Boolean(nextResult.length)
+  }
+  else if (typeof after === 'string') {
+    const cursor = parseCursor(after)
 
     let previousResult;
     [results, previousResult] = await Promise.all([
@@ -63,28 +60,29 @@ export const paginateWithCursor = async <R, C>(
         cursor,
         take: -1,
       }),
-    ]);
+    ])
 
-    hasPreviousPage = Boolean(previousResult.length);
+    hasPreviousPage = Boolean(previousResult.length)
     if (limit !== null && results.length > limit) {
-      hasNextPage = Boolean(results.pop());
+      hasNextPage = Boolean(results.pop())
     }
-  } else {
+  }
+  else {
     results = await model.findMany({
       ...query,
       take: limit === null ? undefined : limit + 1,
-    });
+    })
 
-    hasPreviousPage = false;
+    hasPreviousPage = false
     if (limit !== null && results.length > limit) {
-      hasNextPage = Boolean(results.pop());
+      hasNextPage = Boolean(results.pop())
     }
   }
 
-  const startCursor = results.length ? getCursor(results[0]) : null;
+  const startCursor = results.length ? getCursor(results[0]) : null
   const endCursor = results.length
     ? getCursor(results[results.length - 1])
-    : null;
+    : null
 
   return [
     results,
@@ -94,5 +92,5 @@ export const paginateWithCursor = async <R, C>(
       startCursor,
       endCursor,
     },
-  ];
-};
+  ]
+}

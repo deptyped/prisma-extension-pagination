@@ -1,11 +1,12 @@
-import { extension, paginate, createPaginator } from "./extension";
+import { createPaginator, extension, paginate } from './extension'
+
 export {
-  PageNumberPaginationOptions,
-  PageNumberPaginationMeta,
-  CursorPaginationOptions,
   CursorPaginationMeta,
-} from "./types";
+  CursorPaginationOptions,
+  PageNumberPaginationMeta,
+  PageNumberPaginationOptions,
+} from './types'
 
-export default extension;
+export default extension
 
-export { extension as pagination, paginate, createPaginator };
+export { createPaginator, paginate, extension as pagination }

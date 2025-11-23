@@ -1,11 +1,11 @@
-import { USERS_COUNT } from "../helpers/constants";
-import { prisma } from "../helpers/prisma";
+import { USERS_COUNT } from '../helpers/constants'
+import { prisma } from '../helpers/prisma'
 
 export default async function () {
-  await prisma.$connect();
+  await prisma.$connect()
 
   await Promise.all(
-    [...Array(USERS_COUNT)].map(() =>
+    [...Array.from({ length: USERS_COUNT })].map(() =>
       prisma.user.create({
         select: {
           id: true,
@@ -21,7 +21,7 @@ export default async function () {
               {
                 post: {
                   create: {
-                    title: "Untitled",
+                    title: 'Untitled',
                   },
                 },
               },
@@ -30,12 +30,12 @@ export default async function () {
         },
       }),
     ),
-  );
+  )
 
   return async () => {
-    await prisma.user.deleteMany();
-    await prisma.post.deleteMany();
+    await prisma.user.deleteMany()
+    await prisma.post.deleteMany()
 
-    await prisma.$disconnect();
-  };
+    await prisma.$disconnect()
+  }
 }
