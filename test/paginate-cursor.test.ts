@@ -1,16 +1,15 @@
+import { describe, test, expect } from 'vitest';
 import { CursorPaginationMeta } from "../src";
 
-import { prisma } from "./helpers/prisma";
+import { prismaRaw, prisma } from "./helpers/prisma";
 import { USERS_PER_PAGE } from "./helpers/constants";
-import { PrismaClient } from "@prisma/client";
-
 import pagination from "../src";
 
 describe("paginate with cursor", () => {
   test("accepts default options", async () => {
     const limit = USERS_PER_PAGE;
 
-    const prismaX = new PrismaClient().$extends(
+    const prismaX = prismaRaw.$extends(
       pagination({
         cursor: {
           limit,
@@ -37,7 +36,7 @@ describe("paginate with cursor", () => {
   test("override default options", async () => {
     const limit = USERS_PER_PAGE;
 
-    const prismaX = new PrismaClient().$extends(
+    const prismaX = prismaRaw.$extends(
       pagination({
         cursor: {
           limit: limit * 2,

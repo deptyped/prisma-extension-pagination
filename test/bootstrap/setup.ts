@@ -1,7 +1,7 @@
 import { USERS_COUNT } from "../helpers/constants";
 import { prisma } from "../helpers/prisma";
 
-const setup = async () => {
+export default async function () {
   await prisma.$connect();
 
   await Promise.all(
@@ -31,6 +31,11 @@ const setup = async () => {
       }),
     ),
   );
-};
 
-export default setup;
+  return async () => {
+    await prisma.user.deleteMany();
+    await prisma.post.deleteMany();
+
+    await prisma.$disconnect();
+  };
+}

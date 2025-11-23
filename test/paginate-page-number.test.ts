@@ -1,9 +1,8 @@
+import { describe, test, expect } from 'vitest';
 import { PageNumberPaginationMeta } from "../src";
 
-import { prisma } from "./helpers/prisma";
+import { prismaRaw, prisma } from "./helpers/prisma";
 import { USERS_PER_PAGE, POSTS_COUNT } from "./helpers/constants";
-import { PrismaClient } from "@prisma/client";
-
 import pagination from "../src";
 
 describe("paginate with pages", () => {
@@ -11,7 +10,7 @@ describe("paginate with pages", () => {
     const page = 5;
     const limit = USERS_PER_PAGE;
 
-    const prismaX = new PrismaClient().$extends(
+    const prismaX = prismaRaw.$extends(
       pagination({
         pages: {
           limit,
@@ -47,7 +46,7 @@ describe("paginate with pages", () => {
     const page = 5;
     const limit = USERS_PER_PAGE;
 
-    const prismaX = new PrismaClient().$extends(
+    const prismaX = prismaRaw.$extends(
       pagination({
         pages: {
           limit,
@@ -242,12 +241,10 @@ describe("paginate with pages", () => {
     ).toStrictEqual(await getResults(1));
   });
 
-  // TODO: remove .skip when omit becomes generally available
-  test.skip("using omit in query should not cause error", async () => {
+  test("using omit in query should not cause error", async () => {
     const limit = USERS_PER_PAGE;
     const [results, meta] = await prisma.user
       .paginate({
-        // @ts-expect-error preview feature
         omit: {
           name: true,
         },
@@ -258,7 +255,6 @@ describe("paginate with pages", () => {
       });
 
     const expectedResults = await prisma.user.findMany({
-      // @ts-expect-error preview feature
       omit: {
         name: true,
       },
